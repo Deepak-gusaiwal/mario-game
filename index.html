@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index file</title>
+</head>
+<style>
+    * {
+        margin: 0%;
+        box-sizing: border-box;
+    }
+    
+    body {
+        margin: 0%;
+        box-sizing: border-box;
+        /* overflow-x: hidden; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* background-color: black; */
+        height: 100vh;
+    }
+    
+    canvas {
+        border: 2px solid red;
+    }
+</style>
+
+<body>
+    <canvas>
+    </canvas>
+
+    <!-- <script src="index.js"></script> -->
+    <!-- <script src="practice.js"></script> -->
+    <script src="./practice2.js"></script>
+
+    <!--
+    <script>
+        let canvas = document.querySelector('canvas')
+        canvas.width = 1024;
+        canvas.height = 576;
+        let c = canvas.getContext('2d')
+        let g = 0.5;
+        // createing player Class;
+        class Player {
+            constructor() {
+                this.position = {
+                    x: 100,
+                    y: 100
+                }
+                this.width = 30
+                this.height = 30
+
+                this.velocity = {
+                    x: 0,
+                    y: 0
+                }
+            }
+
+            // function to draw the player on the canvas
+            draw() {
+                c.fillStyle = 'red'
+                c.fillRect(this.position.x, this.position.y, this.width, this.height);
+            }
+            update() {
+                this.position.x += this.velocity.x;
+                this.position.y += this.velocity.y;
+                // console.log(this.height + this.position.y + this.velocity.y)
+                if (this.height + this.position.y + this.velocity.y <= canvas.height) {
+                    // console.log('under the if condition');
+                    this.velocity.y += g;
+                    // this.position.y = this.position.y;
+                } else {
+                    this.velocity.y = 0;
+
+                }
+
+
+                this.draw();
+            }
+        }
+
+
+        // Creating a Plateform Class
+        class Plateform {
+            constructor(x, y, a) {
+                this.position = {
+                    x: x,
+                    y: y
+                }
+                this.image = a
+                this.width = a.width
+                this.height = a.height
+            }
+
+            // function to draw the Plateform
+            draw() {
+                // c.fillStyle = 'blue'
+                // c.fillRect(this.position.x, this.position.y, this.width, this.height);
+                c.drawImage(this.image, this.position.x, this.position.y)
+            }
+        };
+
+        // Creating Class for other background images
+
+        class Static {
+            constructor(x, y, a) {
+                this.position = {
+                    x: x,
+                    y: y
+                }
+                this.image = a
+                this.width = a.width
+                this.height = a.height
+            }
+
+            // function to draw the Plateform
+            draw() {
+                // c.fillStyle = 'blue'
+                // c.fillRect(this.position.x, this.position.y, this.width, this.height);
+                c.drawImage(this.image, this.position.x, this.position.y)
+            }
+        };
+        // images
+        function create(src) {
+            let image = new Image
+            image.src = src
+            console.log(image)
+            return image
+        }
+        let platform = create('./images/platform.png');
+        let bgimg = create('./images/background.png');
+
+
+
+        // let Player
+        let player = new Player();
+        // player.draw();
+
+        // Let Plateform 
+        let plateform = [new Plateform(0, canvas.height - platform.height, platform), new Plateform(platform.width - 2, canvas.height - platform.height, platform)];
+
+        // Let Plateform 
+        let static = [new Static(0, 0, bgimg)];
+
+
+        let direction = {
+            right: false,
+            left: false
+        }
+
+
+
+        function fun1() {
+            requestAnimationFrame(fun1);
+            c.clearRect(0, 0, canvas.width, canvas.height);
+
+            static.forEach((e) => {
+                e.draw();
+            })
+
+            plateform.forEach((e) => {
+                e.draw();
+            });
+
+            player.update();
+            // console.log(plateform.position.y) :- 200
+            // console.log(plateform.height) :-20
+            // console.log(player.position.y):-413.
+            // console.log(player.height): -30
+            // console.log(plateform.position.x):-200
+            // console.log(plateform.width):- 200
+            // console.log(plateform.position.y + plateform.height)
+            // console.log(player.position.y + plateform.height)
+
+            if (direction.right && player.position.x < 400) {
+                player.velocity.x = +5;
+            } else if (direction.left && player.position.x > 100) {
+                player.velocity.x = -5;
+            } else {
+                player.velocity.x = 0;
+                if (direction.right) {
+                    plateform.forEach((e) => {
+                        e.position.x -= 5
+                    });
+
+                } else if (direction.left) {
+                    plateform.forEach((e) => {
+                        e.position.x += 5
+                    });
+                }
+            }
+
+            plateform.forEach((e) => {
+                if (player.position.y + player.height <= e.position.y &&
+                    player.position.y + player.height + player.velocity.y >= e.position.y &&
+                    player.position.x + player.width >= e.position.x &&
+                    player.position.x <= e.width + e.position.x
+                ) {
+                    player.velocity.y = 0;
+                }
+            });
+
+        }
+        fun1();
+
+        // keybord Keys
+        let key = true;
+
+
+        window.addEventListener('keydown', ({
+            code
+        }) => {
+            // console.log(code);
+
+            if (code === 'Space' || code === "ArrowUp") {
+                if (player.velocity.y == 0 && key === true) {
+                    player.velocity.y = -20;
+                    key = false;
+                }
+            } else if (code === 'ArrowRight') {
+                // console.log('right');
+                direction.right = true;
+                // player.velocity.x = 5;
+            } else if (code === 'ArrowLeft') {
+                // console.log('Left');
+                // player.velocity.x = -5;
+                direction.left = true;
+            }
+
+
+        })
+
+
+
+        // keys Up 
+        window.addEventListener('keyup', ({
+            code
+        }) => {
+            if (code === 'Space' || code === "ArrowUp") {
+                key = true;
+            } else if (code === 'ArrowRight') {
+                // player.velocity.x = 0;
+                direction.right = false;
+            } else if (code === 'ArrowLeft') {
+                // player.velocity.x = 0;
+                direction.left = false;
+            }
+
+        })
+    </script>
+    -->
+</body>
+
+</html>
